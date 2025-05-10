@@ -30,38 +30,36 @@ gdf['geographic'] = gdf['geographic'].apply(lambda val:1 if val=="DMS" else 0)
 
 st.title("Predict")
 
-X = gdf[['id', 'subid','row_number','geographic']].values  # Features - change this based on your shapefile columns
+X = gdf[['id', 'subid','row_number','geographic']].values  
 
-# Extract the label (target variable) - let's assume 'mineral_type' is the label
-y = gdf['commodity'].values  # Target labels (e.g., 1 = gold, 0 = non-mineral)
 
-# Split the data into training and testing sets
+y = gdf['commodity'].values  
+
+
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Initialize the Random Forest Classifier
+
 rf_model = RandomForestClassifier(n_estimators=300, random_state=42)
 
-# Train the model
+
 rf_model.fit(X_train, y_train)
 
-# Make predictions on the test set
+
 y_pred = rf_model.predict(X_test)
 
-# Evaluate the model
+
 st.title("Accuracy:")
 st.write(accuracy_score(y_test,y_pred))
-# print("Classification Report:\n", classification_report(y_test, y_pred))
+
 new_data1 = gdf[['id', 'subid','row_number','geographic']].values  
 prediction = rf_model.predict(new_data1)
 gdf['predicted_mineral_type'] = prediction
 
-# Visualize the results on the map
+
 gdf.plot(column='predicted_mineral_type', legend=False)
 plt.title("Predicted Mineral Types")
-st.pyplot(plt.gcf()) # instead of plt.show()
-# Apply the trained model to the full dataset or new data points
-# data1 = {'id':284,'subid':6729,'expid':67,'row_number':88,'geographic':1}
-# new_data = gpd.GeoDataFrame(data=data1,index=[0])
+st.pyplot(plt.gcf()) 
+
 new = {
     'id':st.number_input("Id",0,7359),
     'subid':st.number_input("Sub Id",0,12838),
